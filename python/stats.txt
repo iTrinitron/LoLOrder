@@ -1,0 +1,19 @@
+// Number of builds that consisted of n items
+SELECT cnt, COUNT(cnt) FROM (SELECT COUNT(*) as cnt FROM match_data GROUP BY match_id, p_id) a GROUP BY cnt
+
+
+SELECT p_hash, item_id, AVG(kills) FROM match_data_per_min GROUP BY p_hash, item_id
+
+
+
+SELECT p_hash, item_id, AVG(kills), COUNT(*) FROM match_data_per_min WHERE champion_id = 115 GROUP BY p_hash, item_id 
+
+SELECT p_hash, item_id, AVG(kills) as k, COUNT(*) FROM match_data_per_min WHERE champion_id = 115 GROUP BY p_hash, item_id ORDER BY k DESC
+
+
+SELECT champion_id, p_hash, item_id, AVG(kills) as k, COUNT(*) as c FROM match_data_per_min GROUP BY champion_id, p_hash, item_id HAVING c > 100 ORDER BY k DESC
+
+
+## Aggregate 1
+INSERT INTO `champ_item_build` (champ_id, p_hash, item_id, game_Version, time_built, gold, kills, deaths, cs, assists, won_game, end_game_time, count)
+ SELECT champion_id, p_hash, item_id, game_version, AVG(timestamp), AVG(gold), AVG(kills), AVG(death), AVG(cs), AVG(assist), AVG(won_game), AVG(end_game_time), COUNT(*) as c FROM match_data_per_min GROUP BY champion_id, p_hash, item_id, game_version 
