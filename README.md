@@ -1,6 +1,8 @@
 # LoLOrder | Order Matters
 LolOrder is a data analytics project designed to assist players in their item-building decision process.  While traditional item build applications lay out entire six (6) item builds, LoLOrder provides players with the best option in respect to their current build.
 
+Demo: http://104.131.57.87/
+
 ## Highlights
 - Item by Item Build Statistics!
 
