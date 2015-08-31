@@ -12,6 +12,17 @@ class HomeStore {
     this.itemStr = "";
     this.itemHash = "";
 
+    this.userStats = [];
+    this.userStats[0] = {
+      'gold': 0,
+      'kills': 0,
+      'deaths': 0,
+      'assists': 0,
+      'cs': 0,
+      'win': 0,
+      'time': 0
+    }; 
+
     this.champList = [];
 
     this.userBuild = [
@@ -60,11 +71,24 @@ class HomeStore {
     HomeActions.getBuildList(this.gameV, this.champId, this.itemHash);
   }
 
-  selectItem(itemId) {
+  selectItem(data) {
+    var itemId = data.itemId;
+    var i = data.i;
     this.itemStr = this.itemStr + "." + itemId;
     this.itemHash = btoa(this.itemStr);
     this.userBuild[this.itemNum] = itemId;
     this.itemNum++;
+
+    //Add the new stats to the current stats
+    this.userStats[this.itemNum] = {
+      'gold': this.buildList[i].gold,
+      'kills': this.buildList[i].kills,
+      'deaths': this.buildList[i].deaths,
+      'assists': this.buildList[i].assists,
+      'cs': this.buildList[i].cs,
+      'win': this.buildList[i].won_game,
+      'time': this.buildList[i].end_game_time
+    }; 
 
     HomeActions.getBuildList(this.gameV, this.champId, this.itemHash); //is this bad?
   }
@@ -100,7 +124,6 @@ class HomeStore {
   }
 
   getBuildList(buildList) {
-    console.log(buildList);
 	 this.buildList = buildList;
   }
 

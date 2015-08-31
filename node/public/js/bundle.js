@@ -22,8 +22,12 @@ var HomeActions = (function () {
 
   _createClass(HomeActions, [{
     key: 'selectItem',
-    value: function selectItem(item_id) {
-      this.actions.selectItemSuccess(item_id);
+    value: function selectItem(item_id, i) {
+      var data = {
+        "itemId": item_id,
+        "i": i
+      };
+      this.actions.selectItemSuccess(data);
     }
   }, {
     key: 'setChampId',
@@ -195,13 +199,6 @@ var _classnames = require('classnames');
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
-function ab_addItem(itemId) {
-	glob.itemStr = glob.itemStr + "." + itemId;
-	glob.itemHash = btoa(glob.itemStr);
-	glob.items[glob.itemNum] = itemId;
-	glob.itemNum++;
-}
-
 var BuildStatRow = (function (_React$Component) {
 	_inherits(BuildStatRow, _React$Component);
 
@@ -264,7 +261,9 @@ var Item = (function (_React$Component3) {
 	_createClass(Item, [{
 		key: 'handleClick',
 		value: function handleClick(itemIndex) {
-			this.props.delItem(itemIndex);
+			if (this.props.itemNum >= itemIndex) {
+				this.props.delItem(itemIndex);
+			}
 		}
 	}, {
 		key: 'render',
@@ -308,7 +307,7 @@ var ItemBuild = (function (_React$Component4) {
 				'div',
 				{ className: 'item-build-list' },
 				this.props.userBuild.map(function (itemId, i) {
-					return _react2['default'].createElement(Item, { itemId: itemId, delItem: _this.props.delItem, i: i });
+					return _react2['default'].createElement(Item, { itemNum: _this.props.itemNum, itemId: itemId, delItem: _this.props.delItem, i: i });
 				}),
 				_react2['default'].createElement('div', { className: 'clear' })
 			);
@@ -418,7 +417,7 @@ var UserData = (function (_React$Component7) {
 				'div',
 				{ className: 'item-build' },
 				_react2['default'].createElement(Champion, { setChamp: this.props.setChamp, champId: this.props.champId, champList: this.props.champList }),
-				_react2['default'].createElement(ItemBuild, { delItem: this.props.delItem, userBuild: this.props.userBuild })
+				_react2['default'].createElement(ItemBuild, { itemNum: this.props.itemNum, delItem: this.props.delItem, userBuild: this.props.userBuild })
 			);
 		}
 	}]);
@@ -438,17 +437,14 @@ var UserStats = (function (_React$Component8) {
 	_createClass(UserStats, [{
 		key: 'render',
 		value: function render() {
+			console.log(this.props);
 			return _react2['default'].createElement(
 				'div',
 				{ className: 'userStats' },
 				_react2['default'].createElement(
 					'div',
 					{ className: 'head' },
-					_react2['default'].createElement(
-						'div',
-						null,
-						'Popularity'
-					),
+					_react2['default'].createElement('div', { className: 'name' }),
 					_react2['default'].createElement(
 						'div',
 						null,
@@ -490,43 +486,45 @@ var UserStats = (function (_React$Component8) {
 					{ className: 'row' },
 					_react2['default'].createElement(
 						'div',
-						{ className: 'color-green' },
-						'37%'
+						{ className: 'name' },
+						'Current Stats Per Min'
 					),
 					_react2['default'].createElement(
 						'div',
-						{ className: 'color-green' },
-						'+3.23'
+						null,
+						this.props.userStats[this.props.itemNum].gold.toFixed(2)
 					),
 					_react2['default'].createElement(
 						'div',
-						{ className: 'color-red' },
-						'-3.23'
+						null,
+						this.props.userStats[this.props.itemNum].kills.toFixed(2)
 					),
 					_react2['default'].createElement(
 						'div',
-						{ className: 'color-green' },
-						'+3.23'
+						null,
+						this.props.userStats[this.props.itemNum].deaths.toFixed(2)
 					),
 					_react2['default'].createElement(
 						'div',
-						{ className: 'color-green' },
-						'+3.23'
+						null,
+						this.props.userStats[this.props.itemNum].assists.toFixed(2)
 					),
 					_react2['default'].createElement(
 						'div',
-						{ className: 'color-green' },
-						'+3.23'
+						null,
+						this.props.userStats[this.props.itemNum].cs.toFixed(2)
 					),
 					_react2['default'].createElement(
 						'div',
-						{ className: 'color-green' },
-						'+3.23'
+						null,
+						Math.round(this.props.userStats[this.props.itemNum].win * 100),
+						'%'
 					),
 					_react2['default'].createElement(
 						'div',
-						{ className: 'color-green' },
-						'+3.23'
+						null,
+						Math.floor(this.props.userStats[this.props.itemNum].time / 60),
+						' min'
 					),
 					_react2['default'].createElement('div', { className: 'clear' })
 				)
@@ -594,7 +592,8 @@ var Header = (function (_React$Component9) {
 							'5.14'
 						)
 					),
-					_react2['default'].createElement(UserData, { setChamp: this.props.setChamp, delItem: this.props.delItem, userBuild: this.props.userBuild, champList: this.props.champList, champId: this.props.champId })
+					_react2['default'].createElement(UserData, { itemNum: this.props.itemNum, setChamp: this.props.setChamp, delItem: this.props.delItem, userBuild: this.props.userBuild, champList: this.props.champList, champId: this.props.champId }),
+					_react2['default'].createElement(UserStats, { itemNum: this.props.itemNum, userStats: this.props.userStats })
 				)
 			);
 		}
@@ -615,8 +614,26 @@ var ItemListNode = (function (_React$Component10) {
 
 	_createClass(ItemListNode, [{
 		key: 'handleClick',
-		value: function handleClick(itemId) {
-			this.props.addItem(itemId);
+		value: function handleClick(itemId, i) {
+			this.props.addItem(itemId, i);
+		}
+	}, {
+		key: 'getNumber',
+		value: function getNumber(theNumber) {
+			if (theNumber > 0) {
+				return "+" + theNumber.toFixed(2);
+			} else {
+				return theNumber.toFixed(2);
+			}
+		}
+	}, {
+		key: 'getNumberH',
+		value: function getNumberH(theNumber) {
+			if (theNumber > 0) {
+				return "+" + theNumber;
+			} else {
+				return theNumber;
+			}
 		}
 	}, {
 		key: 'render',
@@ -625,10 +642,51 @@ var ItemListNode = (function (_React$Component10) {
 				'item': true,
 				'alt': this.props.i % 2 == 0
 			});
+			var diff = {
+				'gold': this.props.itemData.gold - this.props.userStats[this.props.itemNum].gold,
+				'kills': this.props.itemData.kills - this.props.userStats[this.props.itemNum].kills,
+				'deaths': this.props.itemData.deaths - this.props.userStats[this.props.itemNum].deaths,
+				'assists': this.props.itemData.assists - this.props.userStats[this.props.itemNum].assists,
+				'cs': this.props.itemData.cs - this.props.userStats[this.props.itemNum].cs,
+				'win': Math.round((this.props.itemData.won_game - this.props.userStats[this.props.itemNum].win) * 100),
+				'time': Math.floor((this.props.itemData.end_game_time - this.props.userStats[this.props.itemNum].time) / 60)
+			};
+
+			var diffClasses = {
+				'gold': (0, _classnames2['default'])({
+					'color-green': diff.gold > 0,
+					'color-red': diff.gold < 0
+				}),
+				'kills': (0, _classnames2['default'])({
+					'color-green': diff.kills > 0,
+					'color-red': diff.kills < 0
+				}),
+				'deaths': (0, _classnames2['default'])({
+					'color-green': diff.deaths > 0,
+					'color-red': diff.deaths < 0
+				}),
+				'assists': (0, _classnames2['default'])({
+					'color-green': diff.assists > 0,
+					'color-red': diff.assists < 0
+				}),
+				'cs': (0, _classnames2['default'])({
+					'color-green': diff.cs > 0,
+					'color-red': diff.cs < 0
+				}),
+				'win': (0, _classnames2['default'])({
+					'color-green': diff.win > 0,
+					'color-red': diff.win < 0
+				}),
+				'time': (0, _classnames2['default'])({
+					'color-green': diff.time > 0,
+					'color-red': diff.time < 0
+				})
+			};
+
 			var imgSrc = "http://ddragon.leagueoflegends.com/cdn/5.15.1/img/item/" + this.props.itemData.item_id + ".png";
 			return _react2['default'].createElement(
 				'div',
-				{ className: classes, onClick: this.handleClick.bind(this, this.props.itemData.item_id) },
+				{ className: classes, onClick: this.handleClick.bind(this, this.props.itemData.item_id, this.props.i) },
 				_react2['default'].createElement(
 					'div',
 					{ className: 'item-icon' },
@@ -641,39 +699,39 @@ var ItemListNode = (function (_React$Component10) {
 				),
 				_react2['default'].createElement(
 					'div',
-					{ className: 'color-green' },
-					this.props.itemData.gold.toFixed(2)
+					{ className: diffClasses.gold },
+					this.getNumber(diff.gold)
 				),
 				_react2['default'].createElement(
 					'div',
-					{ className: 'color-red' },
-					this.props.itemData.kills.toFixed(2)
+					{ className: diffClasses.kills },
+					this.getNumber(diff.kills)
 				),
 				_react2['default'].createElement(
 					'div',
-					{ className: 'color-green' },
-					this.props.itemData.deaths.toFixed(2)
+					{ className: diffClasses.deaths },
+					this.getNumber(diff.deaths)
 				),
 				_react2['default'].createElement(
 					'div',
-					{ className: 'color-green' },
-					this.props.itemData.assists.toFixed(2)
+					{ className: diffClasses.assists },
+					this.getNumber(diff.assists)
 				),
 				_react2['default'].createElement(
 					'div',
-					{ className: 'color-green' },
-					this.props.itemData.cs.toFixed(2)
+					{ className: diffClasses.cs },
+					this.getNumber(diff.cs)
 				),
 				_react2['default'].createElement(
 					'div',
-					{ className: 'color-green' },
-					Math.round(this.props.itemData.won_game * 100),
+					{ className: diffClasses.win },
+					this.getNumberH(diff.win),
 					'%'
 				),
 				_react2['default'].createElement(
 					'div',
-					{ className: 'color-green' },
-					Math.floor(this.props.itemData.end_game_time / 60),
+					{ className: diffClasses.time },
+					this.getNumberH(diff.time),
 					' min'
 				)
 			);
@@ -703,7 +761,7 @@ var ItemList = (function (_React$Component11) {
 					{ className: 'item-list' },
 					this.props.buildList.map(function (itemObj, i) {
 						var itemName = _this3.props.itemList[itemObj.item_id];
-						return _react2['default'].createElement(ItemListNode, _extends({}, _this3.props, { addItem: _this3.props.addItem, itemData: itemObj, i: i }));
+						return _react2['default'].createElement(ItemListNode, _extends({ itemNum: _this3.props.itemNum, userStats: _this3.props.userStats }, _this3.props, { addItem: _this3.props.addItem, itemData: itemObj, i: i }));
 					})
 				);
 			} else {
@@ -779,7 +837,7 @@ var ItemBuildList = (function (_React$Component12) {
 						'Duration'
 					)
 				),
-				_react2['default'].createElement(ItemList, { buildList: this.props.buildList, itemList: this.props.itemList, addItem: this.props.addItem })
+				_react2['default'].createElement(ItemList, { itemNum: this.props.itemNum, userStats: this.props.userStats, buildList: this.props.buildList, itemList: this.props.itemList, addItem: this.props.addItem })
 			);
 		}
 	}]);
@@ -802,7 +860,8 @@ var Content = (function (_React$Component13) {
 			return _react2['default'].createElement(
 				'div',
 				{ className: 'content' },
-				_react2['default'].createElement(ItemBuildList, { buildList: this.props.buildList, itemList: this.props.itemList, addItem: this.props.addItem })
+				_react2['default'].createElement(ItemBuildList, { itemNum: this.props.itemNum, userStats: this.props.userStats, buildList: this.props.buildList, itemList: this.props.itemList, addItem: this.props.addItem }),
+				_react2['default'].createElement(Footer, null)
 			);
 		}
 	}]);
@@ -879,8 +938,9 @@ var Home = (function (_React$Component15) {
 		}
 	}, {
 		key: 'addItem',
-		value: function addItem(itemId) {
-			_actionsHomeActions2['default'].selectItem(itemId);
+		value: function addItem(itemId, i) {
+			console.log(itemId, i);
+			_actionsHomeActions2['default'].selectItem(itemId, i);
 		}
 	}, {
 		key: 'setChamp',
@@ -898,9 +958,8 @@ var Home = (function (_React$Component15) {
 			return _react2['default'].createElement(
 				'div',
 				{ className: 'Home' },
-				_react2['default'].createElement(Header, { setVersion: this.setVersion, setChamp: this.setChamp, delItem: this.delItem, userBuild: this.props.userBuild, champList: this.props.champList, champId: this.props.champId }),
-				_react2['default'].createElement(Content, { addItem: this.addItem, itemList: this.props.itemList, buildList: this.props.buildList }),
-				_react2['default'].createElement(Footer, null)
+				_react2['default'].createElement(Header, { itemNum: this.props.itemNum, userStats: this.props.userStats, setVersion: this.setVersion, setChamp: this.setChamp, delItem: this.delItem, userBuild: this.props.userBuild, champList: this.props.champList, champId: this.props.champId }),
+				_react2['default'].createElement(Content, { itemNum: this.props.itemNum, userStats: this.props.userStats, addItem: this.addItem, itemList: this.props.itemList, buildList: this.props.buildList })
 			);
 		}
 	}], [{
@@ -997,6 +1056,17 @@ var HomeStore = (function () {
     this.itemStr = "";
     this.itemHash = "";
 
+    this.userStats = [];
+    this.userStats[0] = {
+      'gold': 0,
+      'kills': 0,
+      'deaths': 0,
+      'assists': 0,
+      'cs': 0,
+      'win': 0,
+      'time': 0
+    };
+
     this.champList = [];
 
     this.userBuild = [-1, -1, -1, -1, -1];
@@ -1044,11 +1114,24 @@ var HomeStore = (function () {
     }
   }, {
     key: 'selectItem',
-    value: function selectItem(itemId) {
+    value: function selectItem(data) {
+      var itemId = data.itemId;
+      var i = data.i;
       this.itemStr = this.itemStr + "." + itemId;
       this.itemHash = btoa(this.itemStr);
       this.userBuild[this.itemNum] = itemId;
       this.itemNum++;
+
+      //Add the new stats to the current stats
+      this.userStats[this.itemNum] = {
+        'gold': this.buildList[i].gold,
+        'kills': this.buildList[i].kills,
+        'deaths': this.buildList[i].deaths,
+        'assists': this.buildList[i].assists,
+        'cs': this.buildList[i].cs,
+        'win': this.buildList[i].won_game,
+        'time': this.buildList[i].end_game_time
+      };
 
       HomeActions.getBuildList(this.gameV, this.champId, this.itemHash); //is this bad?
     }
@@ -1087,7 +1170,6 @@ var HomeStore = (function () {
   }, {
     key: 'getBuildList',
     value: function getBuildList(buildList) {
-      console.log(buildList);
       this.buildList = buildList;
     }
   }]);

@@ -11,8 +11,12 @@ class HomeActions {
     this.generateActions('setVersionSuccess');
   }
 
-  selectItem(item_id) {
-    this.actions.selectItemSuccess(item_id);
+  selectItem(item_id, i) {
+    var data = {
+      "itemId": item_id,
+      "i": i
+    };
+    this.actions.selectItemSuccess(data);
   }
 
   setChampId(champId) {

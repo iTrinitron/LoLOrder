@@ -11,6 +11,11 @@ var app = express();
 
 var mysql = require('mysql');
 
+var ip = ""
+var usr = ""
+var pwd = ""
+var database = "rapi"
+
 var connection = mysql.createConnection({
   host     : ip,
   user     : usr,

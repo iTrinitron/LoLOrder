@@ -51,11 +51,7 @@ body {
 	color: #f44336;
 }
 .footer {
-	position: absolute;
-	background: @color-2;
-	box-shadow: @z-t-1;
 	width: 100%;
-	margin-top: -30px; /* negative value of footer height */
 	line-height: 28px;
 	height: 28px;
 	font-size: 14px;
@@ -144,6 +140,7 @@ body {
 				background: @color-2;
 				margin-top: 30px;
 				text-align: center;
+
 				.head {
 					background: @text-color;
 					opacity: 0.6;
@@ -157,14 +154,25 @@ body {
 						width: 10%;
 						float: left;
 					}
+
+					.name {
+						width: 30%;
+						min-height: 1px;
+					}
 				}
 
 				.row {
-					
+					color: white;
+					opacity: 0.6;
 					height: 20px;
 					div {
 						width: 10%;
 						float: left;
+					}
+
+					.name {
+						width: 30%;
+						color: white;
 					}
 				}
 			}
