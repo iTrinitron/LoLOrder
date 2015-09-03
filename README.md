@@ -6,6 +6,18 @@ Demo: http://lolorder.michaelrchin.com/
 ## Highlights
 - Item by Item Build Statistics!
 
+## Columns
+
+Items are sorted by their popularity in descending order.
+
+- Gold: Average gold earned per minute when following this build path
+- Kills: Average kills per minute when following this build path
+- Deaths: Average deaths per minute when following this build path
+- Assists: Average assists per minute when following this build path
+- CS: Average creep score per minute when following this build path
+- Win %: Average win percentage when following this build path
+- Duration: Average time a game will last when following this build path
+
 ## Tools
 - Anaconda Python 
 - MySQL 
