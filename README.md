@@ -26,7 +26,7 @@ Items are sorted by their popularity in descending order.
 - Alt Flux
 
 ## Dataset
-Data was obtained from Riot Games API.  It consists of 60,000 ranked 5v5 games across three regions (KR, EUNE, and NA) and two game versions (5.11, 5.14)
+Data was obtained from Riot Games API.  It consists of 60,000 ranked 5v5 games across six regions (KR, EUNE, OCE, LAS, LAN, and NA) and two game versions (5.11, 5.14)
 
 ## Process
 1. Static Data was obtained from Riot Games API (Item, Champion, etc)
